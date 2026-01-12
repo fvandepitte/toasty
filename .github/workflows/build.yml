@@ -54,7 +54,7 @@ jobs:
           Copy-Item "build-arm64/Release/toasty.exe" -Destination "artifacts/toasty-arm64.exe"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: toasty-windows
           path: artifacts/*.exe
@@ -82,7 +82,7 @@ jobs:
           chmod +x artifacts/toasty-universal
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: toasty-macos
           path: artifacts/toasty-universal
@@ -94,13 +94,13 @@ jobs:
 
     steps:
       - name: Download Windows artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.8
         with:
           name: toasty-windows
           path: windows-artifacts
 
       - name: Download macOS artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.8
         with:
           name: toasty-macos
           path: macos-artifacts
