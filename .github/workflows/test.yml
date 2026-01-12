@@ -5,6 +5,9 @@ on:
   push:
     branches: [main, develop, copilot/**]
 
+permissions:
+  contents: read
+
 jobs:
   test-windows:
     runs-on: windows-latest
