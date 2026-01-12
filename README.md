@@ -2,15 +2,21 @@
 
 <img src="icons/toasty.png" alt="Toasty mascot" width="128" align="right">
 
-A tiny Windows toast notification CLI that knows how to hook into Coding Agents so you get notified when their long running tasks are finished. 229 KB, no dependencies.
+A tiny cross-platform notification CLI for Windows and macOS that knows how to hook into Coding Agents so you get notified when their long running tasks are finished. ~229 KB on Windows, ~100 KB on macOS, no dependencies.
 
 ## Quick Start
 
+### Windows
 ```cmd
 toasty "Hello World" -t "Toasty"
 ```
 
-That's it. Toasty auto-registers on first run.
+### macOS
+```bash
+toasty "Hello World" -t "Toasty"
+```
+
+That's it. On Windows, Toasty auto-registers on first run. On macOS, it requests notification permissions on first use.
 
 ## Usage
 
@@ -59,6 +65,8 @@ toasty "Query done" --app gemini
 ## One-Click Hook Installation
 
 Toasty can automatically configure AI CLI agents to show notifications when tasks complete.
+
+**Note**: On macOS, hook installation creates new configuration files. If you have existing hooks, you'll need to manually merge the toasty hooks with your existing configuration.
 
 ### Supported Agents
 
@@ -109,6 +117,7 @@ If you prefer to configure hooks manually:
 
 Add to `~/.claude/settings.json`:
 
+**Windows:**
 ```json
 {
   "hooks": {
@@ -127,10 +136,30 @@ Add to `~/.claude/settings.json`:
 }
 ```
 
+**macOS/Linux:**
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/local/bin/toasty \"Claude finished\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
 ### Gemini CLI
 
 Add to `~/.gemini/settings.json`:
 
+**Windows:**
 ```json
 {
   "hooks": {
@@ -140,6 +169,25 @@ Add to `~/.gemini/settings.json`:
           {
             "type": "command",
             "command": "C:\\path\\to\\toasty.exe \"Gemini finished\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**macOS/Linux:**
+```json
+{
+  "hooks": {
+    "AfterAgent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/local/bin/toasty \"Gemini finished\"",
             "timeout": 5000
           }
         ]
@@ -171,6 +219,8 @@ Add to `.github/hooks/toasty.json`:
 
 ## Building
 
+### Windows
+
 Requires Visual Studio 2022 with C++ workload.
 
 ```cmd
@@ -179,6 +229,22 @@ cmake --build build --config Release
 ```
 
 Output: `build\Release\toasty.exe`
+
+### macOS
+
+Requires Xcode command line tools.
+
+```bash
+cmake -S . -B build
+cmake --build build --config Release
+```
+
+Output: `build/toasty`
+
+To install globally:
+```bash
+sudo cp build/toasty /usr/local/bin/
+```
 
 ## License
 
