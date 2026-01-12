@@ -8,6 +8,7 @@
 #include <sstream>
 #include <codecvt>
 #include <locale>
+#include <mach-o/dyld.h>
 
 namespace fs = std::filesystem;
 

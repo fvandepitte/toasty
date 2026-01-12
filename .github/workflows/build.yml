@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
 
     steps:
@@ -56,16 +56,62 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: toasty-signed
+          name: toasty-windows
           path: artifacts/*.exe
 
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build x86_64
+        run: |
+          cmake -S . -B build-x86_64 -DCMAKE_OSX_ARCHITECTURES=x86_64
+          cmake --build build-x86_64 --config Release
+
+      - name: Build ARM64
+        run: |
+          cmake -S . -B build-arm64 -DCMAKE_OSX_ARCHITECTURES=arm64
+          cmake --build build-arm64 --config Release
+
+      - name: Create universal binary
+        run: |
+          mkdir -p artifacts
+          lipo -create build-x86_64/toasty build-arm64/toasty -output artifacts/toasty
+          chmod +x artifacts/toasty
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: toasty-macos
+          path: artifacts/toasty
+
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: toasty-windows
+          path: windows-artifacts
+
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: toasty-macos
+          path: macos-artifacts
+
       - name: Create Release
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            artifacts/toasty-x64.exe
-            artifacts/toasty-arm64.exe
+            windows-artifacts/toasty-x64.exe
+            windows-artifacts/toasty-arm64.exe
+            macos-artifacts/toasty
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
