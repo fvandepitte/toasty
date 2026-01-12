@@ -221,7 +221,7 @@ bool installCopilotHook(const std::string& exePath) {
         "  \"hooks\": {\n"
         "    \"sessionEnd\": [{\n"
         "      \"type\": \"command\",\n"
-        "      \"bash\": \"toasty 'Copilot finished' -t 'GitHub Copilot'\",\n"
+        "      \"bash\": \"" + exePath + " 'Copilot finished' -t 'GitHub Copilot'\",\n"
         "      \"powershell\": \"" + exePath + " 'Copilot finished' -t 'GitHub Copilot'\",\n"
         "      \"timeoutSec\": 5\n"
         "    }]\n"

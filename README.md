@@ -66,6 +66,8 @@ toasty "Query done" --app gemini
 
 Toasty can automatically configure AI CLI agents to show notifications when tasks complete.
 
+**Note**: On macOS, hook installation creates new configuration files. If you have existing hooks, you'll need to manually merge the toasty hooks with your existing configuration.
+
 ### Supported Agents
 
 | Agent | Config Path | Hook Event | Scope |

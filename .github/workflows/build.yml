@@ -78,14 +78,14 @@ jobs:
       - name: Create universal binary
         run: |
           mkdir -p artifacts
-          lipo -create build-x86_64/toasty build-arm64/toasty -output artifacts/toasty
-          chmod +x artifacts/toasty
+          lipo -create build-x86_64/toasty build-arm64/toasty -output artifacts/toasty-universal
+          chmod +x artifacts/toasty-universal
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: toasty-macos
-          path: artifacts/toasty
+          path: artifacts/toasty-universal
 
   release:
     needs: [build-windows, build-macos]
@@ -111,7 +111,7 @@ jobs:
           files: |
             windows-artifacts/toasty-x64.exe
             windows-artifacts/toasty-arm64.exe
-            macos-artifacts/toasty
+            macos-artifacts/toasty-universal
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
