@@ -6,9 +6,8 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
-#include <codecvt>
-#include <locale>
 #include <mach-o/dyld.h>
+#include <sys/syslimits.h>
 
 namespace fs = std::filesystem;
 
@@ -331,6 +330,30 @@ void handleUninstall() {
     
     bool anyUninstalled = false;
     
+    // Claude uninstall - remove the config file if it only contains toasty hooks
+    if (isClaudeInstalled()) {
+        std::string configPath = expandPath("~/.claude/settings.json");
+        try {
+            fs::remove(configPath);
+            std::cout << "  [x] Claude Code: Removed hooks\n";
+            anyUninstalled = true;
+        } catch (...) {
+            std::cout << "  [ ] Claude Code: Failed to remove\n";
+        }
+    }
+    
+    // Gemini uninstall - remove the config file if it only contains toasty hooks
+    if (isGeminiInstalled()) {
+        std::string configPath = expandPath("~/.gemini/settings.json");
+        try {
+            fs::remove(configPath);
+            std::cout << "  [x] Gemini CLI: Removed hooks\n";
+            anyUninstalled = true;
+        } catch (...) {
+            std::cout << "  [ ] Gemini CLI: Failed to remove\n";
+        }
+    }
+    
     if (isCopilotInstalled()) {
         if (uninstallCopilotHook()) {
             std::cout << "  [x] GitHub Copilot: Removed hooks\n";
@@ -342,6 +365,7 @@ void handleUninstall() {
     
     if (anyUninstalled) {
         std::cout << "\nDone! Hooks have been removed.\n";
+        std::cout << "Note: Config files were deleted. If you had other hooks, you'll need to restore them.\n";
     } else {
         std::cout << "\nNo hooks were installed.\n";
     }
